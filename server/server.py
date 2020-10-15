@@ -17,20 +17,30 @@ ROOM_SIZE=25
 clients=[]
 client_threads=[]
 
-def handle_client():
+def handle_client(client):
     while True:
-        un_head=SERVER.recv(UHEADER).decode(FORMAT)
-        if un_head:
-            un_len=int(un_head)
-            username=SERVER.recv(un_len).decode(FORMAT)
-            msg_head=SERVER.recv(HEADER).decode(FORMAT)
-            if msg_head:
-                msg_len=int(msg_head)
-                msg=SERVER.recv(msg_len).decode(FORMAT)
-                broadcast(username,msg)
+        try:
+            un_head=client.recv(UHEADER).decode(FORMAT)
+            if un_head:
+                un_len=int(un_head)
+                username=client.recv(un_len).decode(FORMAT)
+                msg_head=client.recv(HEADER).decode(FORMAT)
+                if msg_head:
+                    msg_len=int(msg_head)
+                    msg=client.recv(msg_len).decode(FORMAT)
+                    if msg=="EXIT":
+                        client.close()
+
+                    print(f"MESSAGE:{msg}")
+                    broadcast(username,msg)
+        except Exception as e:
+            print(e)
+            client.close()
+            clients.remove(client)
+            print(f'[CLOSED] connection lost from client..')
+            return
 def broadcast(uname,msg):
-    client_list,_,err_list=select.select(clients,[],clients)
-    for client in client_list:
+    for client in clients:
         try:
             client.send(f'{len(uname):<{UHEADER}}{uname}{len(msg):<{HEADER}}{msg}'.encode(FORMAT))
         except Exception as e:
@@ -43,7 +53,7 @@ def start_server():
         conn,addr=SERVER.accept()
         print(f'[NEW CONNECTION] connected to client({IP},{PORT}), Adddress:{addr}')
         clients.append(conn)
-        client_thread=Thread(target=handle_client)
+        client_thread=Thread(target=handle_client,args=[conn])
         client_thread.start()
         client_threads.append(client_thread)
     for client,thread in zip(clients,client_threads):

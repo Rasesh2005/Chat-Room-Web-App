@@ -1,23 +1,39 @@
-import socket
+from socket import socket,AF_INET,SOCK_STREAM,gethostbyname,gethostname
 from threading import Thread
+import threading
 
-CLIENT=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-CLIENT.setblocking(False)
-IP=socket.gethostbyname(socket.gethostname())
+# GLOBAL CONSTANTS
+CLIENT=socket(AF_INET,SOCK_STREAM)
+# CLIENT.setblocking(False)
+IP=gethostbyname(gethostname())
 PORT=1234
 ADDR=(IP,PORT)
-CLIENT.connect(ADDR)
 FORMAT='utf-8'
 HEADER=64
 UHEADER=16
 
+# Global variables
+lock=threading.Lock()
+
 def recv():
-    pass
+    while True:
+        un_head=CLIENT.recv(UHEADER).decode(FORMAT)
+        if un_head:
+            un_len=int(un_head)
+            username=CLIENT.recv(un_len).decode(FORMAT)
+            msg_head=CLIENT.recv(HEADER).decode(FORMAT)
+            if msg_head:
+                msg_len=int(msg_head)
+                msg=CLIENT.recv(msg_len).decode(FORMAT)
+                print(f'{username}:=> {msg}')
+                # return  {username: msg}
 def send(username,msg):
-    pass
+    CLIENT.send(f'{len(username):<{UHEADER}}{username}{len(msg):<{HEADER}}{msg}'.encode(FORMAT))
 def start_client(username):
     CLIENT.connect(ADDR)
     Thread(target=recv).start()
+    input()
 
 if __name__ == "__main__":
-    start_client()
+    username=input("Enter Username: ")
+    start_client(username)
