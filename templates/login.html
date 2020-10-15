@@ -1,0 +1,17 @@
+{%extends 'base.html'%}
+{% block title %}Login{% endblock %}
+{% block style %}
+
+{% endblock %}
+{% block body %}
+<div class="container text-center">
+  <form action='/' method="GET">
+    <div class="form-group">
+      <label for="username">Username</label>
+      <input type="text" class="form-control" id="username" name="username" aria-describedby="emailHelp" placeholder="Enter email">
+    </div>
+    <button type="submit" class="btn btn-primary my-auto">Submit</button>
+  </form>
+  <h1>{{mystring}}</h1>
+  </div>
+{% endblock %}
