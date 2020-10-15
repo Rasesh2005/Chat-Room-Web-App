@@ -14,6 +14,7 @@ UHEADER=16
 
 # Global variables
 lock=threading.Lock()
+messages=[]
 
 def recv():
     while True:
@@ -29,10 +30,10 @@ def recv():
                 # return  {username: msg}
 def send(username,msg):
     CLIENT.send(f'{len(username):<{UHEADER}}{username}{len(msg):<{HEADER}}{msg}'.encode(FORMAT))
-def start_client(username):
+    return
+def start_client():
     CLIENT.connect(ADDR)
     Thread(target=recv).start()
-    input()
 
 if __name__ == "__main__":
     username=input("Enter Username: ")
