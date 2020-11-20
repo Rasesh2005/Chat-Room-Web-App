@@ -27,11 +27,11 @@ def recv():
                 msg_len=int(msg_head)
                 msg=CLIENT.recv(msg_len).decode(FORMAT)
                 print(f'{username}:=> {msg}')
-                # return  {username: msg}
+                messages.append({username:msg})
 def send(username,msg):
     CLIENT.send(f'{len(username):<{UHEADER}}{username}{len(msg):<{HEADER}}{msg}'.encode(FORMAT))
     return
-def start_client():
+def start_client(username):
     CLIENT.connect(ADDR)
     Thread(target=recv).start()
 

@@ -31,7 +31,7 @@ def handle_client(client):
                     if msg=="EXIT":
                         client.close()
 
-                    print(f"MESSAGE:{msg}")
+                    # print(f"MESSAGE:{msg}")
                     broadcast(username,msg)
         except Exception as e:
             print(e)
