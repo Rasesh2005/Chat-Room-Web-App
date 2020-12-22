@@ -21,6 +21,7 @@ class ClientSocket:
             if msglen:
                 message=self.CLIENT.recv(msglen).decode(self.FORMAT)
                 self.MsgList.append(message)
+                print(f"Message Received by Client {self.username} Message={message}")
     def connect(self):
         self.CLIENT.connect(self.ADDR)
         Thread(target=self.recv)
