@@ -1,40 +1,45 @@
-from socket import socket,AF_INET,SOCK_STREAM,gethostbyname,gethostname
-from threading import Thread
+import socket
 import threading
 
-# GLOBAL CONSTANTS
-CLIENT=socket(AF_INET,SOCK_STREAM)
-# CLIENT.setblocking(False)
-IP=gethostbyname(gethostname())
+#Creating an INET , STREAMing socket
+CLIENT=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+IP=socket.gethostbyname(socket.gethostname())
 PORT=1234
 ADDR=(IP,PORT)
+
+MSG_SIZE=32
 FORMAT='utf-8'
-HEADER=64
-UHEADER=16
-
-# Global variables
-lock=threading.Lock()
-messages=[]
-
+sending=False
+printing=False
+MsgList=[]
+def send(username):
+    while True:
+        sending=False
+        msg=(f"{len(msg):<{MSG_SIZE}}"+msg).encode(FORMAT)
+        CLIENT.send(msg)
 def recv():
     while True:
-        un_head=CLIENT.recv(UHEADER).decode(FORMAT)
-        if un_head:
-            un_len=int(un_head)
-            username=CLIENT.recv(un_len).decode(FORMAT)
-            msg_head=CLIENT.recv(HEADER).decode(FORMAT)
-            if msg_head:
-                msg_len=int(msg_head)
-                msg=CLIENT.recv(msg_len).decode(FORMAT)
-                print(f'{username}:=> {msg}')
-                messages.append({username:msg})
-def send(username,msg):
-    CLIENT.send(f'{len(username):<{UHEADER}}{username}{len(msg):<{HEADER}}{msg}'.encode(FORMAT))
-    return
+        msglen=int(CLIENT.recv(MSG_SIZE).decode(FORMAT))
+        if msglen:
+            message=CLIENT.recv(msglen).decode(FORMAT)
+            MsgList.append(message)
+def printMsg():
+    global MsgList,sending,printing
+    while True:
+        if sending:
+            continue
+        if len(MsgList):
+            printing=True
+            print(MsgList[0])
+            MsgList.pop(0)
+            printing=False
 def start_client(username):
     CLIENT.connect(ADDR)
-    Thread(target=recv).start()
+    threading.Thread(target=printMsg).start()
+    sendThread=threading.Thread(target=send,args=(username))
+    sendThread.start()
+    recvThread=threading.Thread(target=recv)
+    recvThread.start()
 
 if __name__ == "__main__":
-    username=input("Enter Username: ")
-    start_client(username)
+    start_client()

@@ -1,64 +1,44 @@
-from socket import socket,AF_INET,SOCK_STREAM,gethostbyname,gethostname
-from threading import Thread
-import select
+import socket
+import threading
 
-# GLOBAL CONSTANT
-SERVER=socket(AF_INET,SOCK_STREAM)
-IP=gethostbyname(gethostname())
+#Creating an INET , STREAMing socket
+SERVER=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+IP=socket.gethostbyname(socket.gethostname())
 PORT=1234
 ADDR=(IP,PORT)
 SERVER.bind(ADDR)
-UHEADER=16
-HEADER=64
+
+MSG_SIZE=32
 FORMAT='utf-8'
-ROOM_SIZE=25
-
-# Global Variables
 clients=[]
-client_threads=[]
+def handleClient(conn,username):
+    print(f"[NEW CONNECTION] {username}")
+    try:
+        while True:
+            msglen=int(conn.recv(MSG_SIZE).decode(FORMAT))
+            if msglen:
+                msg=conn.recv(msglen)
+                broadcast(conn,username,msglen,msg)
+    except Exception as e:
+        print(f"[CONNECTION LOST] User: {username} Connection Lost")
+        clients.remove(conn)
 
-def handle_client(client):
-    while True:
-        try:
-            un_head=client.recv(UHEADER).decode(FORMAT)
-            if un_head:
-                un_len=int(un_head)
-                username=client.recv(un_len).decode(FORMAT)
-                msg_head=client.recv(HEADER).decode(FORMAT)
-                if msg_head:
-                    msg_len=int(msg_head)
-                    msg=client.recv(msg_len).decode(FORMAT)
-                    if msg=="EXIT":
-                        client.close()
-
-                    # print(f"MESSAGE:{msg}")
-                    broadcast(username,msg)
-        except Exception as e:
-            print(e)
-            client.close()
-            clients.remove(client)
-            print(f'[CLOSED] connection lost from client..')
-            return
-def broadcast(uname,msg):
+def broadcast(conn,username,msglen,msg):
+    msg=(f"{(len(username)+3+msglen):<{MSG_SIZE}}"+username+":=>"+msg.decode(FORMAT)).encode(FORMAT)
     for client in clients:
-        try:
-            client.send(f'{len(uname):<{UHEADER}}{uname}{len(msg):<{HEADER}}{msg}'.encode(FORMAT))
-        except Exception as e:
-            print(f'[EXCEPTION] {e}')
+        if not client==conn:
+            client.send(msg)
 
-def start_server():
-    SERVER.listen(ROOM_SIZE)
-    print(f'[LISTENING] listening for connections at {ADDR}')
+def startServer():
+    SERVER.listen(5)
+    print(f"LISTENING FOR CONNECTIONS AT ({IP},{PORT})")
     while True:
         conn,addr=SERVER.accept()
-        print(f'[NEW CONNECTION] connected to client({IP},{PORT}), Adddress:{addr}')
         clients.append(conn)
-        client_thread=Thread(target=handle_client,args=[conn])
-        client_thread.start()
-        client_threads.append(client_thread)
-    for client,thread in zip(clients,client_threads):
-        client.close()
-        thread.join()
-    SERVER.close()
-if __name__=="__main__":
-    start_server()
+        username=conn.recv(32).decode(FORMAT)
+        client = threading.Thread(target=handleClient, args=(conn,username))
+        client.start()
+
+
+if __name__ == "__main__":
+    startServer()
