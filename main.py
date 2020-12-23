@@ -4,6 +4,7 @@ from server.server_socket import ServerSocket
 app=Flask(__name__)
 users=[]
 clients=[]
+
 @app.route('/',methods=['GET',"POST"])
 def login(name="login"):
     global client
@@ -25,8 +26,6 @@ def chat(username,name="chat"):
     if request.method=='POST':   
         msg=request.form.get('msg')
         client.send(msg)
-    else:
-        pass
     return render_template('chatPage.html',name=name,messages=client.MsgList,username=username)
 
 

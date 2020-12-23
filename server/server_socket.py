@@ -8,12 +8,12 @@ class ServerSocket:
         self.IP=gethostbyname(gethostname())
         self.PORT=1234
         self.ADDR=(self.IP,self.PORT)
-        self.MSG_SIZE=32
+        self.BUFF_SIZE=32
         self.FORMAT='utf-8'
         self.clients=[]
         self.startServer()
     def broadcast(self,conn,msglen,msg):
-        msg=(f"{msglen:<{self.MSG_SIZE}}"+msg.decode(self.FORMAT)).encode(self.FORMAT)
+        msg=(f"{msglen:<{self.BUFF_SIZE}}"+msg.decode(self.FORMAT)).encode(self.FORMAT)
         for client in self.clients:
             if not client==conn:
                 client.send(msg)
@@ -21,7 +21,7 @@ class ServerSocket:
         print(f"[NEW CONNECTION]")
         try:
             while True:
-                msglen=int(conn.recv(self.MSG_SIZE).decode(self.FORMAT))
+                msglen=int(conn.recv(self.BUFF_SIZE).decode(self.FORMAT))
                 if msglen:
                     msg=conn.recv(msglen)
                     self.broadcast(conn,msglen,msg)
