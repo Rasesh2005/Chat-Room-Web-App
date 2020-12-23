@@ -9,12 +9,11 @@ class ClientSocket:
         self.ADDR=(self.IP,self.PORT)
         self.BUFF_SIZE=32
         self.FORMAT='utf-8'
-        self.MsgList=[{"Test Username":"Test Message"}]
+        self.MsgList=[]
         self.username=username
-    def send(self,message):
-        while True:
-            msg=(f"{(len(self.username)+3+len(message)):<{self.BUFF_SIZE}}"+self.username+":=>"+msg.decode(self.FORMAT)).encode(self.FORMAT)
-            self.CLIENT.send(msg)
+    def send(self,msg):
+        message=(f"{(len(self.username)+3+len(msg)):<{self.BUFF_SIZE}}"+self.username+":=>"+msg)
+        self.CLIENT.send(message.encode(self.FORMAT))
     def recv(self):
         while True:
             msglen=int(self.CLIENT.recv(self.BUFF_SIZE).decode(self.FORMAT))
@@ -23,8 +22,7 @@ class ClientSocket:
                 username=s[:s.index(':=>')]
                 message=s[s.index(':=>')+3:]
                 self.MsgList.append({username:message})
-                # print(f"Message Received by Client {self.username} Message={message}")
     def connect(self):
         self.CLIENT.connect(self.ADDR)
-        Thread(target=self.recv)
+        Thread(target=self.recv).start()
 

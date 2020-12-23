@@ -5,13 +5,13 @@ Chat Page
 {% block body %}
 <div class="container" style="width:75%;margin-top: 75px;margin-left: auto;margin-right: auto;">
     <h1>{{username}}'s Group Chat</h1>
-    <div data-spy="scroll" data-target="#navbar-example2" style="overflow-y: scroll;height:350px;" data-offset="0">
-        <div class="container">
-            {%for message_item in message%}
-            {% for username, message in message_item.items() %}
+    <div id="scrollspy" data-spy="scroll" data-target="#navbar-example2" style="overflow-y: scroll;height:350px;" data-offset="0">
+        <div class="container py-3">
+            {%for message_item in messages%}
+            {% for sender,message in message_item.items()%}
             <div class="card">
                 <div class="card-header">
-                    {{username}}
+                    {{sender}}
                 </div>
                 <div class="card-body">
                   <blockquote class="blockquote mb-0">
@@ -19,7 +19,7 @@ Chat Page
                   </blockquote>
                 </div>
               </div>
-            {% endfor %}
+            {%endfor%}
             {%endfor%}
         </div>
     </div>
@@ -30,4 +30,6 @@ Chat Page
 </div>
 {% endblock %}
 {% block script %}
+$("#scrollspy").scrollTop($("#scrollspy")[0].scrollHeight);
+$("#msg").focus();
 {% endblock %}

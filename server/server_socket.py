@@ -15,8 +15,7 @@ class ServerSocket:
     def broadcast(self,conn,msglen,msg):
         msg=(f"{msglen:<{self.BUFF_SIZE}}"+msg.decode(self.FORMAT)).encode(self.FORMAT)
         for client in self.clients:
-            if not client==conn:
-                client.send(msg)
+            client.send(msg)
     def handleClient(self,conn):
         print(f"[NEW CONNECTION]")
         try:
