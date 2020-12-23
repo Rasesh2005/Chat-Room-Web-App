@@ -11,8 +11,8 @@ class ClientSocket:
         self.FORMAT='utf-8'
         self.MsgList=[]
         self.username=username
-    def send(self,msg):
-        message=(f"{(len(self.username)+3+len(msg)):<{self.BUFF_SIZE}}"+self.username+":=>"+msg)
+    def send(self,username,msg):
+        message=(f"{(len(username)+3+len(msg)):<{self.BUFF_SIZE}}"+username+":=>"+msg)
         self.CLIENT.send(message.encode(self.FORMAT))
     def recv(self):
         while True:

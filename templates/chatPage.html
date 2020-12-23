@@ -6,10 +6,10 @@ Chat Page
 <div class="container" style="width:75%;margin-top: 75px;margin-left: auto;margin-right: auto;">
     <h1>{{username}}'s Group Chat</h1>
     <div id="scrollspy" data-spy="scroll" data-target="#navbar-example2" style="overflow-y: scroll;height:350px;" data-offset="0">
-        <div class="container py-3">
+        <div class="container">
             {%for message_item in messages%}
             {% for sender,message in message_item.items()%}
-            <div class="card">
+            <div class="card my-3">
                 <div class="card-header">
                     {{sender}}
                 </div>
@@ -32,4 +32,9 @@ Chat Page
 {% block script %}
 $("#scrollspy").scrollTop($("#scrollspy")[0].scrollHeight);
 $("#msg").focus();
+
+setInterval(function(){
+if(msg.value==""){
+  window.location = window.location
+    }},5000);
 {% endblock %}

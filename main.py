@@ -1,4 +1,4 @@
-from flask import Flask,render_template,request,redirect
+from flask import Flask,render_template,request,redirect,jsonify
 from client.client_socket import ClientSocket
 from server.server_socket import ServerSocket
 app=Flask(__name__)
@@ -25,10 +25,10 @@ def login(name="login"):
 def chat(username,name="chat"):
     if request.method=='POST':   
         msg=request.form.get('msg')
-        client.send(msg)
+        client.send(username,msg)
     return render_template('chatPage.html',name=name,messages=client.MsgList,username=username)
 
 
 if __name__ == "__main__":
     server=ServerSocket()
-    app.run(debug=True)
+    app.run(debug=True,threaded=True)
