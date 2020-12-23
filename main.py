@@ -3,19 +3,18 @@ from client.client_socket import ClientSocket
 from server.server_socket import ServerSocket
 app=Flask(__name__)
 users=[]
-clients=[]
-
+connsDict={}
 @app.route('/',methods=['GET',"POST"])
 def login(name="login"):
-    global client
     s=""
     if request.method=='POST':
         username=request.form.get('username')
         if len(username) and len(username)<32:
             if username in users:
                 return render_template('login.html',name=name,mystring=f"Username {username} already exists..")
-            client=ClientSocket(username)
-            client.connect()
+            clientSocket=ClientSocket(username)
+            clientSocket.connect()
+            connsDict[username]=clientSocket
             return redirect(f'/chat/{username}')
         else:
             s="Empty Username or more than 32 character"
@@ -25,8 +24,8 @@ def login(name="login"):
 def chat(username,name="chat"):
     if request.method=='POST':   
         msg=request.form.get('msg')
-        client.send(username,msg)
-    return render_template('chatPage.html',name=name,messages=client.MsgList,username=username)
+        connsDict[username].send(msg)
+    return render_template('chatPage.html',name=name,messages=connsDict[username].MsgList,username=username)
 
 
 if __name__ == "__main__":
