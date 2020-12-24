@@ -1,11 +1,11 @@
-from socket import socket , AF_INET, SOCK_STREAM, gethostbyname,gethostname
+from socket import socket , AF_INET, SOCK_STREAM
 from threading import Thread
 
 class ClientSocket:
     def __init__(self,username):
         self.CLIENT=socket(AF_INET,SOCK_STREAM)
-        self.IP=gethostbyname(gethostname())
-        self.PORT=1234
+        self.IP=''
+        self.PORT=5555
         self.ADDR=(self.IP,self.PORT)
         self.BUFF_SIZE=32
         self.FORMAT='utf-8'

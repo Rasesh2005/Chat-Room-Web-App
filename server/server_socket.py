@@ -1,12 +1,12 @@
-from socket import socket ,SOL_SOCKET,SO_REUSEADDR, AF_INET, SOCK_STREAM, gethostbyname,gethostname
+from socket import socket ,SOL_SOCKET,SO_REUSEADDR, AF_INET, SOCK_STREAM
 from threading import Thread
 class ServerSocket:
     def __init__(self) -> None:
         #Creating an INET , STREAMing socket
         self.SERVER=socket(AF_INET,SOCK_STREAM)
         self.SERVER.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
-        self.IP=gethostbyname(gethostname())
-        self.PORT=1234
+        self.IP=''
+        self.PORT=5555
         self.ADDR=(self.IP,self.PORT)
         self.BUFF_SIZE=32
         self.FORMAT='utf-8'
