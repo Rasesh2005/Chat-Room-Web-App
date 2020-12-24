@@ -3,7 +3,7 @@
 Chat Page
 {% endblock %}
 {% block body %}
-<div class="container" style="width:80%;margin-top: 25px;margin-left: auto;margin-right: auto;">
+<div class="container" style="width:80%;margin-top:50px;margin-left: auto;margin-right: auto;">
     <h1>{{username}}'s Group Chat</h1>
     <div id="scrollspy" data-spy="scroll" data-target="#navbar-example2" style="overflow-y: scroll;height:400px;position: relative;" data-offset="0">
         <div id="chats" class="container align-right">
@@ -24,14 +24,14 @@ Chat Page
         </div>
     </div>
     <form class="form-inline mt-3" action="/chat/{{username}}" method="POST">
-        <input type="text" class="form-control mb-2 mr-sm-2 col-10" id="msg" name="msg" placeholder="Type Your Message">
-        <button type="submit" class="btn btn-primary mb-2 col-1">Send</button>
+        <input type="text" class="form-control mb-2 mr-sm-2 col-9" autofocus id="msg" name="msg" placeholder="Type Your Message">
+        <button type="submit" class="btn btn-primary mb-2 col-3">Send</button>
     </form>
+    <center><button class="btn btn-danger col-10 mt-3">LEAVE CHAT</button></center>
 </div>
 {% endblock %}
 {% block script %}
 $("#scrollspy").scrollTop($("#scrollspy")[0].scrollHeight);
-$("#msg").focus();
 
 setInterval(function(){
 if(msg.value==""){
@@ -57,7 +57,7 @@ if(msg.value==""){
 $("#scrollspy").scrollTop($("#scrollspy")[0].scrollHeight);
 
   });
-    }},1000);
+    }},500);
 
     
 {% endblock %}
