@@ -36,6 +36,6 @@ class ServerSocket:
             client.start()
     def startServer(self):
         self.SERVER.bind(self.ADDR)
-        self.SERVER.listen(5)
+        self.SERVER.listen()
         print(f"LISTENING FOR CONNECTIONS AT ({self.IP},{self.PORT})")
         Thread(target=self.accept_connections).start()
