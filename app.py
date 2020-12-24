@@ -1,7 +1,13 @@
 from flask import Flask,render_template,request,redirect,jsonify
 from client.client_socket import ClientSocket
 from server.server_socket import ServerSocket
+import logging
+import sys 
+
 app=Flask(__name__)
+app.logger.addHandler(logging.StreamHandler(sys.stdout))
+app.logger.setLevel(logging.ERROR)
+
 users=[]
 connsDict={}
 userKeys={}
