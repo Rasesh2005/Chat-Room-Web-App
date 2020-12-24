@@ -7,10 +7,11 @@ import sys
 app=Flask(__name__)
 app.logger.addHandler(logging.StreamHandler(sys.stdout))
 app.logger.setLevel(logging.ERROR)
-
+server=ServerSocket()
 users=[]
 connsDict={}
 userKeys={}
+SERVER_STARTED=False
 @app.route('/',methods=['GET',"POST"])
 def login(name="login"):
     global userKeys,connsDict,users
@@ -66,5 +67,4 @@ def leave_room(username,key):
         return "Key Not Valid"
 
 if __name__ == "__main__":
-    server=ServerSocket()
     app.run(threaded=True)
