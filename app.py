@@ -24,7 +24,7 @@ def login(name="login"):
                     return redirect(f'/chat/{username}')
                 else:
                     return render_template('login.html',name=name,mystring="username already taken.. and the key also doesnt match for login")
-            clientSocket=ClientSocket(username)
+            clientSocket=ClientSocket(server.port,username)
             clientSocket.connect()
             users.append(username)
             connsDict[username]=clientSocket

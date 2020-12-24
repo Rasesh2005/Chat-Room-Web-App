@@ -2,10 +2,10 @@ from socket import socket , AF_INET, SOCK_STREAM
 from threading import Thread
 import os
 class ClientSocket:
-    def __init__(self,username):
+    def __init__(self,port,username):
         self.CLIENT=socket(AF_INET,SOCK_STREAM)
         self.IP=''
-        self.PORT=0
+        self.PORT=port
         self.ADDR=(self.IP,self.PORT)
         self.BUFF_SIZE=32
         self.FORMAT='utf-8'

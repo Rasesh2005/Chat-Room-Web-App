@@ -12,7 +12,7 @@ class ServerSocket:
         self.BUFF_SIZE=32
         self.FORMAT='utf-8'
         self.clients=[]
-        self.startServer()
+        self.port=self.startServer()
     def broadcast(self,msg):
         msg=(f"{len(msg):<{self.BUFF_SIZE}}"+msg.decode(self.FORMAT)).encode(self.FORMAT)
         for client in self.clients:
@@ -40,3 +40,4 @@ class ServerSocket:
         self.SERVER.listen()
         print(f"LISTENING FOR CONNECTIONS AT ({self.IP},{self.PORT})")
         Thread(target=self.accept_connections).start()
+        return self.SERVER.getsockname()[1]
