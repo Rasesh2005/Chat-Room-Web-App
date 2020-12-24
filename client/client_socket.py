@@ -5,7 +5,7 @@ class ClientSocket:
     def __init__(self,username):
         self.CLIENT=socket(AF_INET,SOCK_STREAM)
         self.IP=''
-        self.PORT=65432
+        self.PORT=0
         self.ADDR=(self.IP,self.PORT)
         self.BUFF_SIZE=32
         self.FORMAT='utf-8'
