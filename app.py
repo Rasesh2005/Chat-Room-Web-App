@@ -55,7 +55,8 @@ def chat(username,name="chat"):
 
 @app.route('/chat/<string:username>/chat_list/')
 def getChatList(username):
-    return jsonify(connsDict[username].MsgList)
+    print(connsDict)
+    return jsonify(connsDict.get(username).MsgList)
 
 @app.route('/leave/<string:username>/<string:key>/',methods=["GET","POST"])
 def leave_room(username,key):
