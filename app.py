@@ -11,7 +11,6 @@ server=ServerSocket()
 users=[]
 connsDict={}
 userKeys={}
-SERVER_STARTED=False
 @app.route('/',methods=['GET',"POST"])
 def login(name="login"):
     global userKeys,connsDict,users
