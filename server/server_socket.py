@@ -2,16 +2,17 @@ from socket import socket ,SOL_SOCKET,SO_REUSEADDR, AF_INET, SOCK_STREAM
 from threading import Thread
 import os
 class ServerSocket:
-    def __init__(self) -> None:
+    def __init__(self,port) -> None:
         #Creating an INET , STREAMing socket
         self.SERVER=socket(AF_INET,SOCK_STREAM)
         self.SERVER.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
         self.IP=''
-        self.PORT=0
+        self.PORT=port
         self.ADDR=(self.IP,self.PORT)
         self.BUFF_SIZE=32
         self.FORMAT='utf-8'
         self.clients=[]
+        self.startServer()
     def broadcast(self,msg):
         msg=(f"{len(msg):<{self.BUFF_SIZE}}"+msg.decode(self.FORMAT)).encode(self.FORMAT)
         for client in self.clients:
@@ -39,4 +40,3 @@ class ServerSocket:
         self.SERVER.listen()
         print(f"LISTENING FOR CONNECTIONS AT ({self.IP},{self.PORT})")
         Thread(target=self.accept_connections).start()
-        return self.SERVER.getsockname()[1]

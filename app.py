@@ -7,8 +7,16 @@ import sys
 app=Flask(__name__)
 app.logger.addHandler(logging.StreamHandler(sys.stdout))
 app.logger.setLevel(logging.ERROR)
-server=ServerSocket()
-port=server.startServer()
+def get_open_port():
+        import socket
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.bind(("",0))
+        s.listen(1)
+        port = s.getsockname()[1]
+        s.close()
+        return port
+open_port=get_open_port()
+server=ServerSocket(open_port)
 users=[]
 connsDict={}
 userKeys={}
@@ -25,7 +33,7 @@ def login(name="login"):
                     return redirect(f'/chat/{username}')
                 else:
                     return render_template('login.html',name=name,mystring="username already taken.. and the key also doesnt match for login")
-            clientSocket=ClientSocket(port,username)
+            clientSocket=ClientSocket(open_port,username)
             clientSocket.connect()
             users.append(username)
             connsDict[username]=clientSocket
