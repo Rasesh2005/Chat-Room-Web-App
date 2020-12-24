@@ -1,3 +1,4 @@
+from threading import main_thread
 from flask import Flask,render_template,request,redirect,jsonify
 from client.client_socket import ClientSocket
 from server.server_socket import ServerSocket
@@ -53,7 +54,7 @@ def chat(username,name="chat"):
     return render_template('chatPage.html',name=name,messages=connsDict[username].MsgList,key=userKeys[username],username=username)
 
 @app.route('/chat/<string:username>/chat_list/')
-def getChatList(username,key):
+def getChatList(username):
     return jsonify(connsDict[username].MsgList)
 
 @app.route('/leave/<string:username>/<string:key>/',methods=["GET","POST"])
@@ -69,3 +70,6 @@ def leave_room(username,key):
     else:
         print("KEY IS",userKeys.get('username'),"You Gave: ",key)
         return "Key Not Valid"
+
+if __name__ == "__main__":
+    app.run(debug=True,threaded=True)
