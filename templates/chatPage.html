@@ -4,60 +4,111 @@ Chat Page
 {% endblock %}
 {% block body %}
 <div class="container" style="width:80%;margin-top:50px;margin-left: auto;margin-right: auto;">
-    <h1>{{username}}'s Group Chat</h1>
-    <div id="scrollspy" data-spy="scroll" data-target="#navbar-example2" style="overflow-y: scroll;height:400px;position: relative;" data-offset="0">
-        <div id="chats" class="container align-right">
-            {%for message_item in messages%}
-            {% for sender,message in message_item.items()%}
-            <div class="card my-3" style="width: 60%;">
-                <div class="card-header">
-                    {{sender}}
-                </div>
-                <div class="card-body">
-                  <blockquote class="blockquote mb-0">
-                    <p>{{message}}</p>
-                  </blockquote>
-                </div>
-              </div>
-            {%endfor%}
-            {%endfor%}
-        </div>
-    </div>
-    <form class="form-inline mt-3" action="/chat/{{username}}" method="POST">
-        <input type="text" class="form-control mb-2 mr-sm-2 col-9" autofocus id="msg" name="msg" placeholder="Type Your Message">
-        <button type="submit" class="btn btn-primary mb-2 col-3">Send</button>
-    </form>
-    <center><button class="btn btn-danger col-10 mt-3">LEAVE CHAT</button></center>
-</div>
-{% endblock %}
-{% block script %}
-$("#scrollspy").scrollTop($("#scrollspy")[0].scrollHeight);
-
-setInterval(function(){
-if(msg.value==""){
-  $.get("/chat/{{username}}/chat_list/", function(data, status){
-    console.log(data)
-    var html=``;
-    data.forEach(function(element){
-      for(sendername in element){
-        console.log(`${sendername}: ${element[sendername]}`)
-        html+=`<div class="card my-3" style="width: 60%;">
-          <div class="card-header">
-            ${sendername}
-          </div>
-          <div class="card-body">
+  <h3>{{username}}'s Group Chat</h3>
+  <div id="scrollspy" data-spy="scroll" data-target="#navbar-example2"
+    style="overflow-y: scroll;height:400px;position: relative;" data-offset="0">
+    <div id="chats" class="container">
+      {%for message_item in messages%}
+      {% for sender,message in message_item.items()%}
+      {% if sender==username%}
+      <div class="card my-3 text-right">
+        {%else%}
+        <div class="card my-3 text-left">
+          {%endif%}
+          <div class="card-header py-0" {%if sender==username%} style="background-color: rgb(161, 160, 160);" {%endif%}>
             <blockquote class="blockquote mb-0">
-              <p>${element[sendername]}</p>
+              {{sender}}
             </blockquote>
           </div>
-        </div>`
-      }
-    });
-    document.getElementById("chats").innerHTML=html;
-$("#scrollspy").scrollTop($("#scrollspy")[0].scrollHeight);
-
+          <div class="card-body">
+            {{message}}
+          </div>
+        </div>
+        {%endfor%}
+        {%endfor%}
+      </div>
+    </div>
+    <form id="Msg" class="form-inline mb-2">
+      <div class="form-group col-9">
+          <input type="text" id= msg required style="width: 100%;"class="form-control" autofocus id="msg" name="msg"placeholder="Type Your Message">
+      </div>
+      <div class="form-group col-3">
+          <button type="button" id="submitButton" style="width: 100%;" class="btn btn-primary">Send</button>
+      </div>
+    </form>
+      <center>
+      <form action="/leave/{{username}}/{{key}}/" method="get"><button class="btn btn-danger col-10 mt-3">LEAVE CHAT</button>
+      </form>
+    </center>
+  </div>
+  {% endblock %}
+  {% block script %}
+  $('form#Msg').bind("keypress", function(e) {
+    if (e.keyCode == 13) {               
+      e.preventDefault();
+      sendMsg();
+      return false;
+    }
   });
-    }},500);
+  function sendMsg() {
+    console.log(msg.value)
+    if(msg.value!=""){
+    console.log("Sending Message...")
+    $.ajax({
+        url: '',
+        type: 'POST',
+        data: {
+            msg:msg.value
+        },
+        success: function(msg) {
+            console.log("Message Sent Successfully!!")
+        }               
+    });
+  msg.value="";}
+  }
 
-    
-{% endblock %}
+ $("#submitButton").click(function(){ sendMsg(); })
+
+  $("#scrollspy").scrollTop($("#scrollspy")[0].scrollHeight);
+
+
+  setInterval(function(){
+  $.get("/chat/{{username}}/chat_list/{{key}}", function(data, status){
+    <!-- console.log(data); -->
+  var html=``;
+  data.forEach(function(element){
+  for(sendername in element){
+  if(sendername=="{{username}}"){
+  html+=`<div class="card my-3 text-right">
+    <div class="card-header py-0" style="background-color: rgb(161, 160, 160);">
+      
+      <blockquote class="blockquote mb-0">
+        ${sendername}
+      </blockquote>
+    </div>
+    <div class="card-body">
+      ${element[sendername]}
+    </div>
+  </div>`;
+}
+  else{
+  html+=`<div class="card my-3 text-left">
+    <div class="card-header py-0">
+      <blockquote class="blockquote mb-0">
+      ${sendername}
+        
+      </blockquote>
+    </div>
+    <div class="card-body">
+      ${element[sendername]}
+    </div>
+  </div>`
+  }
+  }
+  });
+  document.getElementById("chats").innerHTML=html;
+  $("#scrollspy").scrollTop($("#scrollspy")[0].scrollHeight);
+  
+  });
+  },500);
+  {% endblock %}

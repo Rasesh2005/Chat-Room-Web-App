@@ -7,8 +7,11 @@
 <div class="container mt-5" style="height: 50%;">
   <center><form action='/' method="POST">
     <div class="form-group">
-      <label for="username">Username</label>
-      <input type="text" class="form-control" id="username" autofocus name="username" aria-describedby="emailHelp" placeholder="Enter email">
+      <input type="text" required class="form-control" id="username" name="username" autofocus name="username" placeholder="Enter Username Here">
+      <small>only alphanumeric characters allowed</small>
+      <input type="text" required name='key' class="form-control" placeholder="Enter Password Key"><br>
+      <small>The password key will be used to access ur chats and control ur account</small><br>
+      <small>So kindly dont share it with anyone</small>
     </div>
     <button type="submit" class="btn btn-primary col-5">Submit</button>
   </form></center>
