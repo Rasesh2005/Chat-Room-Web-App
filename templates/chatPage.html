@@ -74,7 +74,7 @@ Chat Page
 
   setInterval(function(){
   $.get("/chat/{{username}}/chat_list/{{key}}", function(data, status){
-    <!-- console.log(data); -->
+    console.log(data);
   var html=``;
   data.forEach(function(element){
   for(sendername in element){
@@ -107,8 +107,9 @@ Chat Page
   }
   });
   document.getElementById("chats").innerHTML=html;
-  <!-- $("#scrollspy").scrollTop($("#scrollspy")[0].scrollHeight); -->
   
   });
-  },500);
+},500);
+setInterval(function(){$("#scrollspy").scrollTop($("#scrollspy")[0].scrollHeight);},60000)
+<!--  -->
   {% endblock %}

@@ -50,7 +50,7 @@ def getChatList(username,key):
         # print(len(connsDict))
         return jsonify(connsDict[username].MsgList)
     else:
-        return "Key Not Valid"
+        return jsonify(["Key Not Valid"])
 
 @app.route('/leave/<string:username>/<string:key>/',methods=["GET","POST"])
 def leave_room(username,key):
