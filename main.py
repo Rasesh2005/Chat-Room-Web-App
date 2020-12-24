@@ -1,4 +1,4 @@
-from flask import Flask,render_template,request,redirect,jsonify
+from flask import Flask, json,render_template,request,redirect,jsonify
 from client.client_socket import ClientSocket
 from server.server_socket import ServerSocket
 app=Flask(__name__)
@@ -27,6 +27,9 @@ def chat(username,name="chat"):
         connsDict[username].send(msg)
     return render_template('chatPage.html',name=name,messages=connsDict[username].MsgList,username=username)
 
+@app.route('/chat/<string:username>/chat_list/')
+def getChatList(username):
+    return jsonify(connsDict[username].MsgList)
 
 if __name__ == "__main__":
     server=ServerSocket()

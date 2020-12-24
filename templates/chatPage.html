@@ -3,13 +3,13 @@
 Chat Page
 {% endblock %}
 {% block body %}
-<div class="container" style="width:75%;margin-top: 75px;margin-left: auto;margin-right: auto;">
+<div class="container" style="width:80%;margin-top: 25px;margin-left: auto;margin-right: auto;">
     <h1>{{username}}'s Group Chat</h1>
-    <div id="scrollspy" data-spy="scroll" data-target="#navbar-example2" style="overflow-y: scroll;height:350px;" data-offset="0">
-        <div class="container">
+    <div id="scrollspy" data-spy="scroll" data-target="#navbar-example2" style="overflow-y: scroll;height:400px;position: relative;" data-offset="0">
+        <div id="chats" class="container align-right">
             {%for message_item in messages%}
             {% for sender,message in message_item.items()%}
-            <div class="card my-3">
+            <div class="card my-3" style="width: 60%;">
                 <div class="card-header">
                     {{sender}}
                 </div>
@@ -35,6 +35,29 @@ $("#msg").focus();
 
 setInterval(function(){
 if(msg.value==""){
-  window.location = window.location
-    }},5000);
+  $.get("/chat/{{username}}/chat_list/", function(data, status){
+    console.log(data)
+    var html=``;
+    data.forEach(function(element){
+      for(sendername in element){
+        console.log(`${sendername}: ${element[sendername]}`)
+        html+=`<div class="card my-3" style="width: 60%;">
+          <div class="card-header">
+            ${sendername}
+          </div>
+          <div class="card-body">
+            <blockquote class="blockquote mb-0">
+              <p>${element[sendername]}</p>
+            </blockquote>
+          </div>
+        </div>`
+      }
+    });
+    document.getElementById("chats").innerHTML=html;
+$("#scrollspy").scrollTop($("#scrollspy")[0].scrollHeight);
+
+  });
+    }},1000);
+
+    
 {% endblock %}

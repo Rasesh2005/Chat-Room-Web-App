@@ -12,8 +12,8 @@ class ServerSocket:
         self.FORMAT='utf-8'
         self.clients=[]
         self.startServer()
-    def broadcast(self,conn,msglen,msg):
-        msg=(f"{msglen:<{self.BUFF_SIZE}}"+msg.decode(self.FORMAT)).encode(self.FORMAT)
+    def broadcast(self,msg):
+        msg=(f"{len(msg):<{self.BUFF_SIZE}}"+msg.decode(self.FORMAT)).encode(self.FORMAT)
         for client in self.clients:
             client.send(msg)
     def handleClient(self,conn):
@@ -23,7 +23,7 @@ class ServerSocket:
                 msglen=int(conn.recv(self.BUFF_SIZE).decode(self.FORMAT))
                 if msglen:
                     msg=conn.recv(msglen)
-                    self.broadcast(conn,msglen,msg)
+                    self.broadcast(msg)
         except Exception as e:
             print(f"[CONNECTION LOST] User: Connection Lost")
             self.clients.remove(conn)
