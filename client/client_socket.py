@@ -1,5 +1,5 @@
 from socket import socket , AF_INET, SOCK_STREAM
-from threading import Thread
+from multiprocessing import Process
 import os
 class ClientSocket:
     def __init__(self,port,username):
@@ -27,7 +27,7 @@ class ClientSocket:
     def connect(self):
         self.CLIENT.connect(self.ADDR)
         self.send(self.username+" joined The chat")
-        Thread(target=self.recv).start()
+        Process(target=self.recv).start()
 
     def close_client(self):
         self.CLIENT.close()

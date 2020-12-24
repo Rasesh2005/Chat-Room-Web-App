@@ -1,3 +1,4 @@
+from multiprocessing.context import Process
 from socket import socket ,SOL_SOCKET,SO_REUSEADDR, AF_INET, SOCK_STREAM
 from threading import Thread
 import os
@@ -39,4 +40,4 @@ class ServerSocket:
         self.SERVER.bind(self.ADDR)
         self.SERVER.listen()
         print(f"LISTENING FOR CONNECTIONS AT ({self.IP},{self.PORT})")
-        Thread(target=self.accept_connections).start()
+        Process(target=self.accept_connections).start()
