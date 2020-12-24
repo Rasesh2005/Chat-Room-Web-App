@@ -44,13 +44,9 @@ def chat(username,name="chat"):
         # return jsonify({"success":True})
     return render_template('chatPage.html',name=name,messages=connsDict[username].MsgList,key=userKeys[username],username=username)
 
-@app.route('/chat/<string:username>/chat_list/<string:key>')
+@app.route('/chat/<string:username>/chat_list/')
 def getChatList(username,key):
-    if userKeys.get(username)==key:
-        # print(len(connsDict))
-        return jsonify(connsDict[username].MsgList)
-    else:
-        return jsonify(["Key Not Valid"])
+    return jsonify(connsDict[username].MsgList)
 
 @app.route('/leave/<string:username>/<string:key>/',methods=["GET","POST"])
 def leave_room(username,key):
