@@ -76,9 +76,7 @@ Chat Page
   $.get("/chat/{{username}}/chat_list/", function(data, status){
     console.log(data);
   var html=``;
-  if(!data==["Key Not Valid"])
   data.forEach(function(element){
-    if(element=="Key Not Valid") continue;
   for(sendername in element){
   if(sendername=="{{username}}"){
   html+=`<div class="card my-3 text-right">
@@ -113,5 +111,4 @@ Chat Page
   });
 },500);
 setInterval(function(){$("#scrollspy").scrollTop($("#scrollspy")[0].scrollHeight);},60000)
-<!--  -->
   {% endblock %}
