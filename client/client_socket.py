@@ -5,7 +5,7 @@ class ClientSocket:
     def __init__(self,username):
         self.CLIENT=socket(AF_INET,SOCK_STREAM)
         self.IP=''
-        self.PORT=int(os.getenv('PORT'))
+        self.PORT=8080
         self.ADDR=(self.IP,self.PORT)
         self.BUFF_SIZE=32
         self.FORMAT='utf-8'

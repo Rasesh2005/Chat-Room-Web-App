@@ -7,7 +7,7 @@ class ServerSocket:
         self.SERVER=socket(AF_INET,SOCK_STREAM)
         self.SERVER.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
         self.IP=''
-        self.PORT=int(os.getenv('PORT'))
+        self.PORT=8080
         self.ADDR=(self.IP,self.PORT)
         self.BUFF_SIZE=32
         self.FORMAT='utf-8'
