@@ -12,7 +12,6 @@ class ServerSocket:
         self.BUFF_SIZE=32
         self.FORMAT='utf-8'
         self.clients=[]
-        self.port=self.startServer()
     def broadcast(self,msg):
         msg=(f"{len(msg):<{self.BUFF_SIZE}}"+msg.decode(self.FORMAT)).encode(self.FORMAT)
         for client in self.clients:
