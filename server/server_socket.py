@@ -15,14 +15,14 @@ class ServerSocket:
         self.clients=[]
         self.startServer()
     def broadcast(self,msg):
-        msg=(f"{len(msg):<{self.BUFF_SIZE}}"+msg.decode(self.FORMAT)).encode(self.FORMAT)
+        msg=(f"{len(msg):<{self.BUFF_SIZE}}"+msg.decode(self.FORMAT,'ignore')).encode(self.FORMAT,'ignore')
         for client in self.clients:
             client.send(msg)
     def handleClient(self,conn):
         print(f"[NEW CONNECTION]")
         while True:
             try:
-                msglen=int(conn.recv(self.BUFF_SIZE).decode(self.FORMAT))
+                msglen=int(conn.recv(self.BUFF_SIZE).decode(self.FORMAT,'ignore'))
                 if msglen:
                     msg=conn.recv(msglen)
                     self.broadcast(msg)

@@ -14,13 +14,13 @@ class ClientSocket:
         self.username=username
     def send(self,msg):
         message=(f"{(len(self.username)+3+len(msg)):<{self.BUFF_SIZE}}"+self.username+":=>"+msg)
-        self.CLIENT.send(message.encode(self.FORMAT))
+        self.CLIENT.send(message.encode(self.FORMAT,'ignore'))
 
     def recv(self):
         while True:
-            msglen=int(self.CLIENT.recv(self.BUFF_SIZE).decode(self.FORMAT))
+            msglen=int(self.CLIENT.recv(self.BUFF_SIZE).decode(self.FORMAT,'ignore'))
             if msglen:
-                s=self.CLIENT.recv(msglen).decode(self.FORMAT)
+                s=self.CLIENT.recv(msglen).decode(self.FORMAT,'ignore')
                 username=s[:s.index(':=>')]
                 message=s[s.index(':=>')+3:]
                 self.MsgList.append({username:message})
