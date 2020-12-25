@@ -34,8 +34,8 @@ class ClientSocket:
                     message = s[s.index(':=>')+3:]
                     if len(message):
                         self.MsgList.append({username: message})
-            except:
-                pass
+            except Exception as e:
+                print(f"[RECEIVE EXCEPTION] {e}")
 
     def connect(self):
         self.CLIENT.connect(self.ADDR)
