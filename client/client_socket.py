@@ -23,7 +23,8 @@ class ClientSocket:
                 s=self.CLIENT.recv(msglen).decode(self.FORMAT,'ignore')
                 username=s[:s.index(':=>')]
                 message=s[s.index(':=>')+3:]
-                self.MsgList.append({username:message})
+                if len(message):
+                    self.MsgList.append({username:message})
                     
     def connect(self):
         self.CLIENT.connect(self.ADDR)
