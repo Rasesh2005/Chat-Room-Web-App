@@ -106,9 +106,11 @@ Chat Page
   }
   }
   });
-  document.getElementById("chats").innerHTML=html;
-  
+
+  if(chats.innerHTML!=html){
+    chats.innerHTML=html
+    $("#scrollspy").scrollTop($("#scrollspy")[0].scrollHeight);
+  }
   });
 },2000);
-setInterval(function(){$("#scrollspy").scrollTop($("#scrollspy")[0].scrollHeight);},60000)
   {% endblock %}
