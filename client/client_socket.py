@@ -25,17 +25,21 @@ class ClientSocket:
             pass
 
     def recv(self):
-        while True:
-            try:
-                msglen = self.CLIENT.recv(self.BUFF_SIZE).decode(self.FORMAT, 'ignore')
-                if msglen:
-                    s = self.CLIENT.recv(int(msglen)).decode(self.FORMAT, 'ignore')
-                    username = s[:s.index(':=>')]
-                    message = s[s.index(':=>')+3:]
-                    if len(message):
-                        self.MsgList.append({username: message})
-            except Exception as e:
-                print(f"[RECEIVE EXCEPTION] {e}")
+        try:
+            while True:
+                try:
+                    msglen = self.CLIENT.recv(self.BUFF_SIZE).decode(self.FORMAT, 'ignore')
+                    if msglen:
+                        s = self.CLIENT.recv(int(msglen)).decode(self.FORMAT, 'ignore')
+                        username = s[:s.index(':=>')]
+                        message = s[s.index(':=>')+3:]
+                        if len(message):
+                            self.MsgList.append({username: message})
+                except:
+                    pass
+        except Exception as e:
+            print(f"[RECEIVE EXCEPTION] {e}")
+            self.close_client()
 
     def connect(self):
         self.CLIENT.connect(self.ADDR)

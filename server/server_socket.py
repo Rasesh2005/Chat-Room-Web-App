@@ -1,4 +1,4 @@
-from socket import gethostbyname, gethostname, SHUT_WR, socket, SOL_SOCKET, SO_REUSEADDR, AF_INET, SOCK_STREAM
+from socket import gethostbyname, gethostname, socket, SOL_SOCKET, SO_REUSEADDR, AF_INET, SOCK_STREAM
 from threading import Thread
 import sys
 
@@ -32,8 +32,8 @@ class ServerSocket:
                     try:
                         msg = conn.recv(int(msglen))
                         self.broadcast(msg)
-                    except:
-                        pass
+                    except Exception as e:
+                        print(e)
             except Exception as e:
                 print(f"[CONNECTION LOST] User: Connection Lost\n[EXCEPTION] {e}")
                 self.clients.remove(conn)
