@@ -16,7 +16,7 @@ class ClientSocket:
         self.MsgList = []
         self.username = username
 
-    def send(self, msg):
+    def sendMsg(self, msg):
         try:
             message = (
                 f"{(len(self.username)+3+len(msg)):<{self.BUFF_SIZE}}"+self.username+":=>"+msg)
@@ -27,10 +27,9 @@ class ClientSocket:
     def recv(self):
         while True:
             try:
-                msglen = int(self.CLIENT.recv(
-                    self.BUFF_SIZE).decode(self.FORMAT, 'ignore'))
+                msglen = self.CLIENT.recv(self.BUFF_SIZE).decode(self.FORMAT, 'ignore')
                 if msglen:
-                    s = self.CLIENT.recv(msglen).decode(self.FORMAT, 'ignore')
+                    s = self.CLIENT.recv(int(msglen)).decode(self.FORMAT, 'ignore')
                     username = s[:s.index(':=>')]
                     message = s[s.index(':=>')+3:]
                     if len(message):
@@ -40,7 +39,7 @@ class ClientSocket:
 
     def connect(self):
         self.CLIENT.connect(self.ADDR)
-        self.send(self.username+" joined The chat")
+        self.sendMsg(self.username+" joined The chat")
         Thread(target=self.recv).start()
 
     def close_client(self):

@@ -55,7 +55,7 @@ def login(name="login"):
 def chat(username, name="chat"):
     if request.method == 'POST':
         msg = request.form.get('msg')
-        connsDict[username].send(msg)
+        connsDict[username].sendMsg(msg)
         # return jsonify({"success":True})
     return render_template('chatPage.html', name=name, messages=connsDict[username].MsgList, key=userKeys[username], username=username)
 
@@ -71,7 +71,7 @@ def leave_room(username, key):
     global connsDict, userKeys, users
     if userKeys.get(username) == key:
         conn = connsDict.get(username)
-        conn.send(username+" left the chat..")
+        conn.sendMsg(username+" left the chat..")
         conn.close_client()
         connsDict.pop(username, None)
         userKeys.pop(username, None)
