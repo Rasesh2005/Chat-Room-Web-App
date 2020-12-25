@@ -1,4 +1,4 @@
-from socket import gethostbyname, gethostname, socket, SOL_SOCKET, SO_REUSEADDR, AF_INET, SOCK_STREAM
+from socket import gethostbyname, gethostname,SHUT_WR, socket, SOL_SOCKET, SO_REUSEADDR, AF_INET, SOCK_STREAM
 from threading import Thread
 import sys
 
@@ -36,6 +36,8 @@ class ServerSocket:
                         print(e)
             except Exception as e:
                 print(f"[CONNECTION LOST] User: Connection Lost\n[EXCEPTION] {e}")
+                conn.shutdown(SHUT_WR)
+                conn.close()
                 self.clients.remove(conn)
 
     def accept_connections(self):
