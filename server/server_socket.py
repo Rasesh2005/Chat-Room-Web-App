@@ -21,23 +21,24 @@ class ServerSocket:
     def broadcast(self, msg):
         message = (f"{len(msg):<{self.BUFF_SIZE}}"+msg.decode(self.FORMAT,'ignore'))
         for client in self.clients:
-            client.send(message.encode(self.FORMAT, 'ignore'))
+            try:
+                client.send(message.encode(self.FORMAT, 'ignore'))
+            except Exception as e:
+                print(f'[BROADCAST ERROR] {e}')
 
     def handleClient(self, conn):
         print(f"[NEW CONNECTION]")
         try:
             while True:
-                try:
-                    msglen = conn.recv(self.BUFF_SIZE).decode(self.FORMAT, 'ignore')
-                    if msglen:
-                        try:
-                            msg = conn.recv(int(msglen))
-                            self.broadcast(msg)
-                        except Exception as e:
-                            print(e)
-                except Exception as e:
-                    print(f"[CONNECTION LOST] User: Connection Lost\n[EXCEPTION] {e}")
+                msglen = conn.recv(self.BUFF_SIZE).decode(self.FORMAT, 'ignore')
+                if msglen:
+                    try:
+                        msg = conn.recv(int(msglen))
+                        self.broadcast(msg)
+                    except Exception as e:
+                        print(f'[HANDLECLIENT ERROR]{e}')
         except:
+            print(f"[CONNECTION LOST] User: Connection Lost\n[EXCEPTION] {e}")
             conn.shutdown(SHUT_WR)
             conn.close()
             self.clients.remove(conn)
