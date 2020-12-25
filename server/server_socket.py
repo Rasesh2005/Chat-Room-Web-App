@@ -1,12 +1,14 @@
-from socket import socket ,SOL_SOCKET,SO_REUSEADDR, AF_INET, SOCK_STREAM
+from socket import gethostbyname, gethostname, socket ,SOL_SOCKET,SO_REUSEADDR, AF_INET, SOCK_STREAM
 from threading import Thread
-import os
+import sys
+from multiprocessing import Process
 class ServerSocket:
     def __init__(self,port) -> None:
         #Creating an INET , STREAMing socket
         self.SERVER=socket(AF_INET,SOCK_STREAM)
         self.SERVER.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
         self.IP=''
+        if sys.platform=="win32" or sys.platform=="darwin": self.IP=gethostbyname(gethostname())
         self.PORT=port
         self.ADDR=(self.IP,self.PORT)
         self.BUFF_SIZE=32
@@ -39,4 +41,4 @@ class ServerSocket:
         self.SERVER.bind(self.ADDR)
         self.SERVER.listen()
         print(f"LISTENING FOR CONNECTIONS AT ({self.IP},{self.PORT})")
-        Thread(target=self.accept_connections).start()
+        Process(target=self.accept_connections).start()

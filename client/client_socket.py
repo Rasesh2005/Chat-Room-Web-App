@@ -1,9 +1,10 @@
-from socket import socket , AF_INET, SOCK_STREAM
-import os
+from socket import gethostbyname, gethostname, socket , AF_INET, SOCK_STREAM
+import sys
 from threading import Thread
 class ClientSocket:
     def __init__(self,port,username):
         self.CLIENT=socket(AF_INET,SOCK_STREAM)
+        if sys.platform=="win32" or sys.platform=="darwin": self.IP=gethostbyname(gethostname())
         self.IP=''
         self.PORT=port
         self.ADDR=(self.IP,self.PORT)
