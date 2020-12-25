@@ -51,9 +51,7 @@ Chat Page
     }
   });
   function sendMsg() {
-    console.log(msg.value)
     if(msg.value!=""){
-    console.log("Sending Message...")
     $.ajax({
         url: '',
         type: 'POST',
@@ -74,7 +72,6 @@ Chat Page
 
   setInterval(function(){
   $.get("/chat/{{username}}/chat_list/", function(data, status){
-    console.log(data);
   var html=``;
   data.forEach(function(element){
   for(sendername in element){

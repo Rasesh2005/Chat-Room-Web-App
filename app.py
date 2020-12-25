@@ -72,4 +72,4 @@ def leave_room(username,key):
         return "Key Not Valid"
 
 if __name__ == "__main__":
-    app.run()
+    app.run(threaded=True)
