@@ -39,7 +39,6 @@ def login(name="login"):
             users.append(username)
             connsDict[username]=clientSocket
             userKeys[username]=key
-            print(userKeys)
             return redirect(f'/chat/{username}')
         else:
             s="length of username should be between 1 and 32 and only alphanumeric characters allowed"
