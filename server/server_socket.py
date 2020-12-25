@@ -25,20 +25,22 @@ class ServerSocket:
 
     def handleClient(self, conn):
         print(f"[NEW CONNECTION]")
-        while True:
-            try:
-                msglen = conn.recv(self.BUFF_SIZE).decode(self.FORMAT, 'ignore')
-                if msglen:
-                    try:
-                        msg = conn.recv(int(msglen))
-                        self.broadcast(msg)
-                    except Exception as e:
-                        print(e)
-            except Exception as e:
-                print(f"[CONNECTION LOST] User: Connection Lost\n[EXCEPTION] {e}")
-                conn.shutdown(SHUT_WR)
-                conn.close()
-                self.clients.remove(conn)
+        try:
+            while True:
+                try:
+                    msglen = conn.recv(self.BUFF_SIZE).decode(self.FORMAT, 'ignore')
+                    if msglen:
+                        try:
+                            msg = conn.recv(int(msglen))
+                            self.broadcast(msg)
+                        except Exception as e:
+                            print(e)
+                except Exception as e:
+                    print(f"[CONNECTION LOST] User: Connection Lost\n[EXCEPTION] {e}")
+        except:
+            conn.shutdown(SHUT_WR)
+            conn.close()
+            self.clients.remove(conn)
 
     def accept_connections(self):
         while True:
