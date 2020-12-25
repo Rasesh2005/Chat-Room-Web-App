@@ -1,7 +1,6 @@
 from socket import gethostbyname, gethostname, socket ,SOL_SOCKET,SO_REUSEADDR, AF_INET, SOCK_STREAM
 from threading import Thread
 import sys
-from multiprocessing import Process
 class ServerSocket:
     def __init__(self,port) -> None:
         #Creating an INET , STREAMing socket
@@ -41,4 +40,4 @@ class ServerSocket:
         self.SERVER.bind(self.ADDR)
         self.SERVER.listen()
         print(f"LISTENING FOR CONNECTIONS AT ({self.IP},{self.PORT})")
-        Process(target=self.accept_connections).start()
+        Thread(target=self.accept_connections).start()
