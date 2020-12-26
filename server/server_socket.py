@@ -37,7 +37,7 @@ class ServerSocket:
                         self.broadcast(msg)
                     except Exception as e:
                         print(f'[HANDLECLIENT ERROR]{e}')
-        except:
+        except Exception as e:
             print(f"[CONNECTION LOST] User: Connection Lost\n[EXCEPTION] {e}")
             conn.shutdown(SHUT_WR)
             conn.close()

@@ -15,7 +15,7 @@ class ClientSocket:
         self.FORMAT = 'utf-8'
         self.MsgList = []
         self.username = username
-
+        self.clientWorking=True
     def sendMsg(self, msg):
         try:
             message = (
@@ -26,7 +26,7 @@ class ClientSocket:
 
     def recv(self):
         try:
-            while True:
+            while self.clientWorking:
                 
                     msglen = self.CLIENT.recv(self.BUFF_SIZE).decode(self.FORMAT, 'ignore')
                     if msglen:
@@ -48,5 +48,6 @@ class ClientSocket:
         Thread(target=self.recv).start()
 
     def close_client(self):
+        self.clientWorking=False
         self.CLIENT.shutdown(SHUT_WR)
         self.CLIENT.close()
