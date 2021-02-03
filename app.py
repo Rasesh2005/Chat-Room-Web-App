@@ -6,11 +6,21 @@ import logging
 import sys
 
 app = Flask(__name__)
+
+# to log errors on heroku console for easier debug
 app.logger.addHandler(logging.StreamHandler(sys.stdout))
 app.logger.setLevel(logging.ERROR)
 
 
 def get_open_port():
+    """
+    Function to find open port which is not in use at the moment..
+    We Find it by:
+     * Giving it empty IP and PORT 0 so that i finds everything by itself
+     * Use s.getsockname()[1] to get port which is occupied by current socket object
+     * Close the socket by s.close()
+     * return the port so that SERVER and CLIENT can connect on it
+    """
     import socket
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.bind(("", 0))
@@ -19,11 +29,14 @@ def get_open_port():
     s.close()
     return port
 
-
+# Getting open Port
 open_port = get_open_port()
 server = ServerSocket(open_port)
+# list of usernames to prevent duplicate usernames
 users = []
+# Dictionary of username to its respective client socket to access its socket later
 connsDict = {}
+# Dictionary of User to their Key They enter while Login
 userKeys = {}
 
 
@@ -36,6 +49,7 @@ def login(name="login"):
         key = request.form.get('key')
         if len(username) and len(username) < 32:
             if username in users and username.isalnum:
+                # if key matches then redirect to chat of that person
                 if userKeys[username] == key:
                     return redirect(f'/chat/{username}')
                 else:
@@ -55,15 +69,17 @@ def login(name="login"):
 def chat(username, name="chat"):
     if request.method == 'POST':
         msg = request.form.get('msg')
+        # accessing client for a username ans sending message using it
         connsDict[username].sendMsg(msg)
-        # return jsonify({"success":True})
+
     return render_template('chatPage.html', name=name, messages=connsDict[username].MsgList, key=userKeys[username], username=username)
 
 
 @app.route('/chat/<string:username>/chat_list/')
 def getChatList(username):
     if username in connsDict:
-        print(connsDict)
+        # returning messages list without authentication as 
+        # it is single room for all and everyone can access the chats by joining the room
         return jsonify(connsDict.get(username).MsgList)
 
 
@@ -78,7 +94,6 @@ def leave_room(username, key):
         userKeys.pop(username, None)
         return redirect('/')
     else:
-        print("KEY IS", userKeys.get('username'), "You Gave: ", key)
         return "Key Not Valid"
 
 
