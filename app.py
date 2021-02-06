@@ -4,6 +4,9 @@ from client.client_socket import ClientSocket
 from server.server_socket import ServerSocket
 import logging
 import sys
+from argon2 import PasswordHasher
+
+ph = PasswordHasher()
 
 app = Flask(__name__)
 
@@ -29,6 +32,7 @@ def get_open_port():
     s.close()
     return port
 
+
 # Getting open Port
 open_port = get_open_port()
 server = ServerSocket(open_port)
@@ -36,7 +40,7 @@ server = ServerSocket(open_port)
 users = []
 # Dictionary of username to its respective client socket to access its socket later
 connsDict = {}
-# Dictionary of User to their Key They enter while Login
+# Dictionary of User to their passwordHash They enter while Login
 userKeys = {}
 
 
@@ -46,19 +50,21 @@ def login(name="login"):
     s = ""
     if request.method == 'POST':
         username = request.form.get('username')
-        key = request.form.get('key')
+        password = request.form.get('pass')
+        passwordHash = ph.hash(password)
+
         if len(username) and len(username) < 32:
             if username in users and username.isalnum:
-                # if key matches then redirect to chat of that person
-                if userKeys[username] == key:
+                # if passwordHash matches then redirect to chat of that person
+                if ph.verify(userKeys.get(username), password):
                     return redirect(f'/chat/{username}')
                 else:
-                    return render_template('login.html', name=name, mystring="username already taken.. and the key also doesnt match for login")
+                    return render_template('login.html', name=name, mystring="username already taken.. and the password also doesn't match for login")
             clientSocket = ClientSocket(open_port, username)
             clientSocket.connect()
             users.append(username)
             connsDict[username] = clientSocket
-            userKeys[username] = key
+            userKeys[username] = passwordHash
             return redirect(f'/chat/{username}')
         else:
             s = "length of username should be between 1 and 32 and only alphanumeric characters allowed"
@@ -72,29 +78,31 @@ def chat(username, name="chat"):
         # accessing client for a username ans sending message using it
         connsDict[username].sendMsg(msg)
 
-    return render_template('chatPage.html', name=name, messages=connsDict[username].MsgList, key=userKeys[username], username=username)
+    return render_template('chatPage.html', name=name, messages=connsDict[username].MsgList, passwordHash=userKeys[username], username=username)
 
 
 @app.route('/chat/<string:username>/chat_list/')
 def getChatList(username):
     if username in connsDict:
-        # returning messages list without authentication as 
+        # returning messages list without authentication as
         # it is single room for all and everyone can access the chats by joining the room
         return jsonify(connsDict.get(username).MsgList)
 
 
-@app.route('/leave/<string:username>/<string:key>/', methods=["GET", "POST"])
-def leave_room(username, key):
+@app.route('/leave/<string:username>/', methods=["GET", "POST"])
+def leave_room(username):
     global connsDict, userKeys, users
-    if userKeys.get(username) == key:
+    passwordHash = request.form.get("passwordHash")
+    if userKeys[username] == passwordHash:
         conn = connsDict.get(username)
         conn.sendMsg(username+" left the chat..")
         conn.close_client()
+        users.remove(username)
         connsDict.pop(username, None)
         userKeys.pop(username, None)
         return redirect('/')
     else:
-        return "Key Not Valid"
+        return "Password didn't Match"
 
 
 if __name__ == "__main__":

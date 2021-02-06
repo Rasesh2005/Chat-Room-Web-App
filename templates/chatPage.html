@@ -38,8 +38,7 @@ Chat Page
     </form>
     <center><small>Certain Emojis are not supported and hence will be removed from your message...</small></center>
       <center>
-      <form action="/leave/{{username}}/{{key}}/" method="get"><button class="btn btn-danger col-10 mt-3">LEAVE CHAT</button>
-      </form>
+      <button class="btn btn-danger col-10 mt-3" id="leaveBtn">LEAVE CHAT</button>
     </center>
   </div>
   {% endblock %}
@@ -57,7 +56,7 @@ Chat Page
         url: '',
         type: 'POST',
         data: {
-            msg:msg.value
+            msg:msg.value,
         },
         success: function(msg) {
             console.log("Message Sent Successfully!!")
@@ -65,7 +64,21 @@ Chat Page
     });
   msg.value="";}
   }
-
+  function leaveChat(){
+    $.ajax({
+      url: '/leave/{{username}}',
+      type: 'POST',
+      data: {
+          passwordHash:"{{passwordHash}}",
+      },
+      success: function(msg) {
+        console.log(msg)
+        if(msg)
+        window.location.pathname = "/"
+      }               
+  });
+  }
+ $("#leaveBtn").click(function(){ leaveChat(); })
  $("#submitButton").click(function(){ sendMsg(); })
 
   $("#scrollspy").scrollTop($("#scrollspy")[0].scrollHeight);
@@ -110,5 +123,5 @@ Chat Page
     $("#scrollspy").scrollTop($("#scrollspy")[0].scrollHeight);
   }
   });
-},500);
+},5000);
   {% endblock %}
