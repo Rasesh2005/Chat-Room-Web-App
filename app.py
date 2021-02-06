@@ -5,6 +5,7 @@ from server.server_socket import ServerSocket
 import logging
 import sys
 from argon2 import PasswordHasher
+import os
 
 ph = PasswordHasher()
 
@@ -78,7 +79,7 @@ def chat(username, name="chat"):
         # accessing client for a username ans sending message using it
         connsDict[username].sendMsg(msg)
 
-    return render_template('chatPage.html', name=name, messages=connsDict[username].MsgList, passwordHash=userKeys[username], username=username)
+    return render_template('chatPage.html', name=name, messages=connsDict[username].MsgList, passwordHash=userKeys[username], username=username,latency=os.getenv("LATENCY")
 
 
 @app.route('/chat/<string:username>/chat_list/')
