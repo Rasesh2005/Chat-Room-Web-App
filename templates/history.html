@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}
+Chat Page
+{% endblock %}
+{% block body %}
+<div class="container" style="width:80%;margin-top:50px;margin-left: auto;margin-right: auto;">
+  <h3>{{username}}'s Group Chat</h3>
+  <div id="scrollspy" data-spy="scroll" data-target="#navbar-example2"
+    style="overflow-y: scroll;height:400px;position: relative;" data-offset="0">
+    <div id="chats" class="container">
+      {%for msg in messages%}
+      {% if msg.username==username%}
+      <div class="card my-3 text-right">
+        {%else%}
+        <div class="card my-3 text-left">
+          {%endif%}
+          <div class="card-header py-0" {%if sender==username%} style="background-color: rgb(161, 160, 160);" {%endif%}>
+            <blockquote class="blockquote mb-0">
+              {{msg.username}} <span class="badge badge-secondary">{{msg.timestamp}}</span>
+            </blockquote>
+          </div>
+          <div class="card-body">
+            {{msg.message}}
+          </div>
+        </div>
+        {%endfor%}
+      </div>
+    </div>
+  </div>
+  {% endblock %}

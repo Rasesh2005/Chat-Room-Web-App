@@ -8,7 +8,7 @@ class ServerSocket:
     A Class to represent Server Socket.
     """
 
-    def __init__(self, port: int) -> None:
+    def __init__(self, port: int,db,model) -> None:
         # Creating an INET , STREAMing socket
         self.SERVER = socket(AF_INET, SOCK_STREAM)
         # make the server reusable
@@ -21,7 +21,7 @@ class ServerSocket:
         self.BUFF_SIZE = 32
         self.FORMAT = 'utf-8'
         self.clients = []  # list of clients connected to server at the moment
-        self.startServer()
+        self.startServer(db,model)
 
     def broadcast(self, msg: bytes) -> None:
         """
@@ -36,7 +36,7 @@ class ServerSocket:
             except Exception as e:
                 print(f'[BROADCAST ERROR] {e}')
 
-    def handleClient(self, conn: socket) -> None:
+    def handleClient(self, conn: socket,db,model) -> None:
         """
         A function to be threaded for each client. 
         The function Receives a message from the respective client and broadcasts it to all the clients
@@ -47,28 +47,33 @@ class ServerSocket:
             client socket representative at server side
         """
         print(f"[NEW CONNECTION]")
-        try:
-            while True:
-                # receiving the length of message
-                msglen = conn.recv(self.BUFF_SIZE).decode(
-                    self.FORMAT, 'ignore')
-                if msglen:  # if received something
-                    try:
-                        # receive rest of the message
-                        msg = conn.recv(int(msglen))
-                        if msg:
-                            self.broadcast(msg)
-                    except Exception as e:
-                        print(f'[HANDLECLIENT ERROR]{e}')
-        except Exception as e:
-            # Close the connection from erver side if client closes connection from client side
-            print(f"[CONNECTION LOST] User: Connection Lost\n[EXCEPTION] {e}")
-            conn.shutdown(SHUT_WR)
-            conn.close()
-            # remove client from clients list
-            self.clients.remove(conn)
+        # try:
+        while True:
+            # receiving the length of message
+            msglen = conn.recv(self.BUFF_SIZE).decode(
+                self.FORMAT, 'ignore')
+            if msglen:  # if received something
+                # try:
+                # receive rest of the message
+                msg = conn.recv(int(msglen))
+                if msg:
+                    text=msg.decode(self.FORMAT,'ignore')
+                    username = text[:text.index(':=>')]
+                    message = text[text.index(':=>')+3:]
+                    db.session.add(model(username=username,message=message))
+                    db.session.commit()
+                    self.broadcast(msg)
+                # except Exception as e:
+                    # print(f'[HANDLECLIENT ERROR]{e}')
+        # except Exception as e:
+        #     # Close the connection from erver side if client closes connection from client side
+        #     print(f"[CONNECTION LOST] User: Connection Lost\n[EXCEPTION] {e}")
+        #     conn.shutdown(SHUT_WR)
+        #     conn.close()
+        #     # remove client from clients list
+        #     self.clients.remove(conn)
 
-    def accept_connections(self):
+    def accept_connections(self,db,model):
         """
         A function to accept connections forever
         """
@@ -76,13 +81,13 @@ class ServerSocket:
             conn, addr = self.SERVER.accept()
             self.clients.append(conn)
             # making thread for each client and starting it
-            client = Thread(target=self.handleClient, args=[conn])
+            client = Thread(target=self.handleClient, args=[conn,db,model])
             client.start()
 
-    def startServer(self):
+    def startServer(self,db,model):
         self.SERVER.bind(self.ADDR)
         self.SERVER.listen()
         print(f"LISTENING FOR CONNECTIONS AT ({self.IP},{self.PORT})")
         # Make a thead to accept connections and return
-        Thread(target=self.accept_connections).start()
+        Thread(target=self.accept_connections,args=[db,model]).start()
         # accepting conditions and other parts of program will occur simultaneously

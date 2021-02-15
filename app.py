@@ -1,4 +1,3 @@
-from threading import main_thread
 from flask import Flask, render_template, request, redirect, jsonify
 from client.client_socket import ClientSocket
 from server.server_socket import ServerSocket
@@ -6,10 +5,27 @@ import logging
 import sys
 from argon2 import PasswordHasher
 import os
+from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
 
 ph = PasswordHasher()
 
 app = Flask(__name__)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////messages.db'
+db = SQLAlchemy(app)
+
+class Message(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), nullable=False)
+    message = db.Column(db.String(500), nullable=False)
+    timestamp=db.Column(db.DateTime, nullable=False,
+        default=datetime.utcnow)
+    def __repr__(self):
+        return str(self.username)
+
+db.drop_all()
+db.create_all()
 
 # to log errors on heroku console for easier debug
 app.logger.addHandler(logging.StreamHandler(sys.stdout))
@@ -36,7 +52,7 @@ def get_open_port():
 
 # Getting open Port
 open_port = get_open_port()
-server = ServerSocket(open_port)
+server = ServerSocket(open_port,db,Message)
 # list of usernames to prevent duplicate usernames
 users = []
 # Dictionary of username to its respective client socket to access its socket later
@@ -61,7 +77,7 @@ def login(name="login"):
                     return redirect(f'/chat/{username}')
                 else:
                     return render_template('login.html', name=name, mystring="username already taken.. and the password also doesn't match for login")
-            clientSocket = ClientSocket(open_port, username)
+            clientSocket = ClientSocket(open_port, username,Message.query.all())
             clientSocket.connect()
             users.append(username)
             connsDict[username] = clientSocket
@@ -79,7 +95,7 @@ def chat(username, name="chat"):
         # accessing client for a username ans sending message using it
         connsDict[username].sendMsg(msg)
 
-    return render_template('chatPage.html', name=name, messages=connsDict[username].MsgList, passwordHash=userKeys[username], username=username,latency=os.getenv("LATENCY"))
+    return render_template('chatPage.html', name=name, messages=connsDict[username].MsgList, passwordHash=userKeys[username], username=username,latency=2000)
 
 
 @app.route('/chat/<string:username>/chat_list/')
@@ -105,6 +121,10 @@ def leave_room(username):
     else:
         return "Password didn't Match"
 
+@app.route('/history/<string:username>/')
+def history(username):
+    return render_template("history.html",messages=Message.query.all(),username=username)
 
 if __name__ == "__main__":
+    
     app.run(threaded=True)

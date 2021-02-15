@@ -8,7 +8,7 @@ class ClientSocket:
     A Class to represent client socket
     """
 
-    def __init__(self, port: int, username: str) -> None:
+    def __init__(self, port: int, username: str,msglist=None) -> None:
         self.CLIENT = socket(AF_INET, SOCK_STREAM)
         self.IP = ''  # if on linux or hosting platform
         if sys.platform == "win32" or sys.platform == "darwin":  # if on windows or mac
@@ -17,7 +17,7 @@ class ClientSocket:
         self.ADDR = (self.IP, self.PORT)
         self.BUFF_SIZE = 32
         self.FORMAT = 'utf-8'
-        self.MsgList = []  # to store all messages received(by recv thread)
+        self.MsgList = [{m.username:m.message} for m in msglist] if msglist else []  # to store all messages received(by recv thread)
         self.username = username
         self.clientWorking = True
 
