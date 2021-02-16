@@ -7,3 +7,4 @@ sockets==1.0.0
 Werkzeug==1.0.1
 gunicorn==20.0.4
 argon2-cffi==20.1.0
+flask-sqlalchemy==2.4.4
