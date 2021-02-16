@@ -13,7 +13,7 @@ Chat Page
       <div class="card my-3 text-right">
         <div class="card-header py-0" {%if msg.username==username%} style="background-color: rgb(161, 160, 160);" {%endif%}>
           <blockquote class="blockquote mb-0">
-            <span class="badge badge-secondary">{{msg.timestamp}}</span> {{msg.username}}
+            <span class="badge badge-secondary">{{msg.timestamp}}</span>{{msg.username}}
           </blockquote>
         </div>
         {%else%}

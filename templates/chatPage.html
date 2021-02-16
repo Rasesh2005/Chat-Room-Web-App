@@ -13,7 +13,7 @@ Chat Page
       <div class="card my-3 text-right">
         <div class="card-header py-0" {%if msg.username==username%} style="background-color: rgb(161, 160, 160);" {%endif%}>
           <blockquote class="blockquote mb-0">
-            <span class="badge badge-secondary">{{msg.timestamp}}</span> {{msg.username}}
+            <span class="badge badge-secondary">{{msg.timestamp}}</span>{{msg.username}}
           </blockquote>
         </div>
         {%else%}
@@ -91,14 +91,15 @@ Chat Page
   setInterval(function(){
   $.get("/chat/{{username}}/chat_list/", function(data, status){
   var html=``;
-  data.forEach(function(element){
+  timestamps=data[1]
+  data[0].forEach(function(element,index){
   for(sendername in element){
   if(sendername=="{{username}}"){
   html+=`<div class="card my-3 text-right">
     <div class="card-header py-0" style="background-color: rgb(161, 160, 160);">
       
       <blockquote class="blockquote mb-0">
-        ${sendername}
+        <span class="badge badge-secondary">${timestamps[index]}</span> ${sendername}
       </blockquote>
     </div>
     <div class="card-body">
@@ -110,7 +111,7 @@ Chat Page
   html+=`<div class="card my-3 text-left">
     <div class="card-header py-0">
       <blockquote class="blockquote mb-0">
-      ${sendername}
+      ${sendername}<span class="badge badge-secondary">${timestamps[index]}</span> 
         
       </blockquote>
     </div>

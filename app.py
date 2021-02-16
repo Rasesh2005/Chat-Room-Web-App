@@ -96,7 +96,7 @@ def chat(username, name="chat"):
         # accessing client for a username ans sending message using it
         connsDict[username].sendMsg(msg)
 
-    return render_template('chatPage.html', name=name, messages=connsDict[username].MsgList, passwordHash=userKeys[username], username=username,latency=os.getenv('LATENCY'))
+    return render_template('chatPage.html', name=name, messages=connsDict[username].MsgList, passwordHash=userKeys[username], username=username,latency=os.getenv("LATENCY"))
 
 
 @app.route('/chat/<string:username>/chat_list/')
@@ -104,7 +104,8 @@ def getChatList(username):
     if username in connsDict:
         # returning messages list without authentication as
         # it is single room for all and everyone can access the chats by joining the room
-        return jsonify(connsDict.get(username).MsgList)
+        timeStamps=[i.timestamp for i in Message.query.all()]
+        return jsonify([connsDict.get(username).MsgList,timeStamps])
 
 
 @app.route('/leave/<string:username>/', methods=["GET", "POST"])
@@ -124,7 +125,8 @@ def leave_room(username):
 
 @app.route('/history/<string:username>/')
 def history(username):
-    return render_template("history.html",messages=Message.query.all(),username=username)
+    timeStamps=[i.timestamp for i in Message.query.all()]
+    return render_template("history.html",timestamps=timeStamps,messages=Message.query.all(),username=username)
 
 if __name__ == "__main__":
     
