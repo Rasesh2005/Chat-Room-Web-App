@@ -8,23 +8,27 @@ Chat Page
   <div id="scrollspy" data-spy="scroll" data-target="#navbar-example2"
     style="overflow-y: scroll;height:400px;position: relative;" data-offset="0">
     <div id="chats" class="container">
-      {%for message_item in messages%}
-      {% for sender,message in message_item.items()%}
-      {% if sender==username%}
+      {%for msg in messages%}
+      {% if msg.username==username%}
       <div class="card my-3 text-right">
+        <div class="card-header py-0" {%if msg.username==username%} style="background-color: rgb(161, 160, 160);" {%endif%}>
+          <blockquote class="blockquote mb-0">
+            <span class="badge badge-secondary">{{msg.timestamp}}</span> {{msg.username}}
+          </blockquote>
+        </div>
         {%else%}
         <div class="card my-3 text-left">
-          {%endif%}
-          <div class="card-header py-0" {%if sender==username%} style="background-color: rgb(161, 160, 160);" {%endif%}>
+          <div class="card-header py-0" {%if msg.username==username%} style="background-color: rgb(161, 160, 160);" {%endif%}>
             <blockquote class="blockquote mb-0">
-              {{sender}}
+              {{msg.username}} <span class="badge badge-secondary">{{msg.timestamp}}</span>
             </blockquote>
           </div>
+          {%endif%}
+          
           <div class="card-body">
-            {{message}}
+            {{msg.message}}
           </div>
         </div>
-        {%endfor%}
         {%endfor%}
       </div>
     </div>
