@@ -12,7 +12,9 @@ ph = PasswordHasher()
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////messages.db'
+file_path = os.path.abspath(os.getcwd())+"\database.db"
+
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///'+file_path
 db = SQLAlchemy(app)
 
 class Message(db.Model):
